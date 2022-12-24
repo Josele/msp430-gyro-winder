@@ -10,6 +10,7 @@
 #define TIMER_MAX_MILLI_SEC 5400UL
 
 // Delay function implemented with MCU's Timer.
+// Max sleep time defined by the parameter size.
 void delay_time_ms(volatile uint16_t ms) {
     //TBD: choosing different timer if it is currently being used.
     int cnt_sleep = 0;
@@ -17,16 +18,17 @@ void delay_time_ms(volatile uint16_t ms) {
 
     cnt_sleep = ms/TIMER_MAX_MILLI_SEC;
     rem_sleep = ms%TIMER_MAX_MILLI_SEC;
-
+    // The timer may be smaller than the ms,
+    // so we have to wait several cycles.
     for(;cnt_sleep > 0;cnt_sleep--)
     {
         CCTL0 = CCIE;                             // TACCTL0 interrupt enabled
-        CCR0 =  TIMER_MAX_MILLI_SEC*12;                            // CCR0 count
+        CCR0 =  TIMER_MAX_MILLI_SEC*12;           // CCR0 count
         TACTL = TASSEL_1 + MC_1;                  // ACLK  +, upmode,  32 kHz
         __bis_SR_register(LPM3_bits + GIE);       // Enter LPM3 w/ interrupt
     }
-    CCTL0 = CCIE;                             // TACCTL0 interrupt enabled
-    CCR0 =  rem_sleep*12;                            // CCR0 count
+    CCTL0 = CCIE;                                 // TACCTL0 interrupt enabled
+    CCR0 =  rem_sleep*12;                         // CCR0 count
     TACTL = TASSEL_1 + MC_1;                  // ACLK  +, upmode,  32 kHz
     __bis_SR_register(LPM3_bits + GIE);       // Enter LPM3 w/ interrupt
 }

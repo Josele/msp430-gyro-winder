@@ -7,6 +7,7 @@
 #include "pins_control.h"
 #include <msp430.h>
 
+// Configure GPIO directions. Upon success, return 0.
 uint8_t pin_setup(uint8_t pin, pin_direction_t dir )
 {
    if(pin > 7)
@@ -24,6 +25,7 @@ uint8_t pin_setup(uint8_t pin, pin_direction_t dir )
    return 0;
 }
 
+// Set GPIO state. Upon success, return 0.
 uint8_t digital_write(uint8_t pin, pin_state_t state )
 {
     if(pin > 7)
